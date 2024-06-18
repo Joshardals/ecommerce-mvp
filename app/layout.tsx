@@ -1,9 +1,13 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Roboto } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 
-const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
+const inter = Roboto({
+  subsets: ["latin"],
+  variable: "--font-sans",
+  weight: ["500"],
+});
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -17,14 +21,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body
-        className={
-          (cn("min-h-screen bg-background font-sans antialiased"),
-          inter.variable)
-        }
-      >
-        {children}
-      </body>
+      <body className={inter.variable}>{children}</body>
     </html>
   );
 }
