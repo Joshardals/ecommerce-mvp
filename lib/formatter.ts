@@ -8,8 +8,8 @@ export function formatCurrency(amount: number) {
   return CURRENCY_FORMATTER.format(amount);
 }
 
-const NUMVER_FORMATTER = new Intl.NumberFormat("en-US");
+const NUMBER_FORMATTER = new Intl.NumberFormat("en-US");
 
 export function formatNumber(number: number) {
-  return NUMVER_FORMATTER.format(number);
+  return NUMBER_FORMATTER.format(number);
 }
