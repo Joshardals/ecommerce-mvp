@@ -24,6 +24,7 @@ export async function getSalesData() {
 
 export async function getUserData() {
   try {
+    nostore();
     const [userCount, orderData] = await Promise.all([
       prisma.user.count(),
       prisma.order.aggregate({
@@ -45,6 +46,7 @@ export async function getUserData() {
 
 export async function getProductData() {
   try {
+    nostore();
     const [activeCount, inactiveCount] = await Promise.all([
       prisma.product.count({ where: { isAvailableForPurchase: true } }),
       prisma.product.count({ where: { isAvailableForPurchase: false } }),
