@@ -22,5 +22,4 @@ export async function addProducts(formData: FormData) {
   }
 
   const data = result.data;
-
 }
