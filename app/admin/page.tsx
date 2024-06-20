@@ -9,7 +9,7 @@ import {
   getProductData,
   getSalesData,
   getUserData,
-} from "@/lib/action/prisma.actions";
+} from "@/app/admin/_actions/admin.actions.";
 import { formatCurrency, formatNumber } from "@/lib/formatter";
 
 export default async function AdminDashboard() {
