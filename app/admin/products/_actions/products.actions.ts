@@ -2,6 +2,12 @@
 
 import { z } from "zod";
 import fs from "fs/promises";
+import { PrismaClient } from "@prisma/client";
+import { unstable_noStore as nostore } from "next/cache";
+import { redirect } from "next/navigation";
+import { File } from "node-fetch";
+
+const prisma = new PrismaClient();
 
 const fileSchema = z.instanceof(File, { message: "Required" });
 const imageSchema = fileSchema.refine(
@@ -18,6 +24,7 @@ const addSchema = z.object({
 
 export async function addProducts(formData: FormData) {
   try {
+    nostore();
     const result = addSchema.safeParse(Object.fromEntries(formData.entries()));
     if (result.success === false) {
       return result.error.formErrors.fieldErrors;
@@ -35,6 +42,18 @@ export async function addProducts(formData: FormData) {
       `public${imagePath}`,
       Buffer.from(await data.image.arrayBuffer())
     );
+
+    await prisma.product.create({
+      data: {
+        name: data.name,
+        description: data.description,
+        priceInCents: data.priceInCents,
+        filePath,
+        imagePath,
+      },
+    });
+
+    redirect("/admin/products");
   } catch (error: any) {
     console.log(`Error adding products... ${error.message}`);
   }
