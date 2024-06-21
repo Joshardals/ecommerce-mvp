@@ -72,6 +72,9 @@ export async function getProducts() {
       },
       orderBy: { name: "asc" },
     });
+
+    if (products.length === 0) console.log("No product found");
+    return products;
   } catch (error: any) {
     console.log(`Error fetching Products... ${error.message}`);
   }
