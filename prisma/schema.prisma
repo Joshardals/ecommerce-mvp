@@ -44,7 +44,6 @@ model Order {
   product                 Product     @relation(fields: [productId], references: [id], onDelete: Cascade)
 
 }
-
 model DownloadVerification {
   id                      String      @id     @default(uuid())
   expiresAt               DateTime    

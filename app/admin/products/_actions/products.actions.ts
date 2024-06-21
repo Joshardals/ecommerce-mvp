@@ -22,7 +22,7 @@ const addSchema = z.object({
   image: imageSchema.refine((file) => file.size > 0, "Required"),
 });
 
-export async function addProducts(formData: FormData) {
+export async function addProducts(prevState: unknown, formData: FormData) {
   try {
     nostore();
     const result = addSchema.safeParse(Object.fromEntries(formData.entries()));
@@ -52,9 +52,8 @@ export async function addProducts(formData: FormData) {
         imagePath,
       },
     });
-
-    redirect("/admin/products");
   } catch (error: any) {
     console.log(`Error adding products... ${error.message}`);
   }
+  redirect("/admin/products");
 }
