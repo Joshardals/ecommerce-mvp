@@ -17,18 +17,25 @@ const addSchema = z.object({
 });
 
 export async function addProducts(formData: FormData) {
-  const result = addSchema.safeParse(Object.fromEntries(formData.entries()));
-  if (result.success === false) {
-    return result.error.formErrors.fieldErrors;
+  try {
+    const result = addSchema.safeParse(Object.fromEntries(formData.entries()));
+    if (result.success === false) {
+      return result.error.formErrors.fieldErrors;
+    }
+
+    const data = result.data;
+
+    await fs.mkdir("products", { recursive: true });
+    const filePath = `products/${crypto.randomUUID()}-${data.file.name}`;
+    await fs.writeFile(filePath, Buffer.from(await data.file.arrayBuffer()));
+
+    await fs.mkdir("public/products", { recursive: true });
+    const imagePath = `/products/${crypto.randomUUID()}-${data.image.name}`;
+    await fs.writeFile(
+      `public${imagePath}`,
+      Buffer.from(await data.image.arrayBuffer())
+    );
+  } catch (error: any) {
+    console.log(`Error adding products... ${error.message}`);
   }
-
-  const data = result.data;
-
-  await fs.mkdir("products", { recursive: true });
-  const filePath = `products/${crypto.randomUUID()}-${data.file.name}`;
-  await fs.writeFile(filePath, Buffer.from(await data.file.arrayBuffer()));
-
-  await fs.mkdir("public/products", { recursive: true });
-  const imagePath = `products/${crypto.randomUUID()}-${data.image.name}`;
-  await fs.writeFile(imagePath, Buffer.from(await data.image.arrayBuffer()));
 }
