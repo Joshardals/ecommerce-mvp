@@ -1,6 +1,6 @@
 "use server";
 
-import { z } from "zod";
+import { ZodSchema, z } from "zod";
 import fs from "fs/promises";
 import { PrismaClient } from "@prisma/client";
 import { unstable_noStore as nostore } from "next/cache";
@@ -14,7 +14,7 @@ const imageSchema = fileSchema.refine(
   (file) => file.size === 0 || file.type.startsWith("image/")
 );
 
-const addSchema = z.object({
+const addSchema: ZodSchema = z.object({
   name: z.string().min(1),
   description: z.string().min(1),
   priceInCents: z.coerce.number().int().min(1),
@@ -45,6 +45,7 @@ export async function addProducts(prevState: unknown, formData: FormData) {
 
     await prisma.product.create({
       data: {
+        isAvailableForPurchase: false,
         name: data.name,
         description: data.description,
         priceInCents: data.priceInCents,
@@ -56,4 +57,22 @@ export async function addProducts(prevState: unknown, formData: FormData) {
     console.log(`Error adding products... ${error.message}`);
   }
   redirect("/admin/products");
+}
+
+export async function getProducts() {
+  try {
+    nostore();
+    const products = await prisma.product.findMany({
+      select: {
+        id: true,
+        name: true,
+        priceInCents: true,
+        isAvailableForPurchase: true,
+        _count: { select: { orders: true } },
+      },
+      orderBy: { name: "asc" },
+    });
+  } catch (error: any) {
+    console.log(`Error fetching Products... ${error.message}`);
+  }
 }

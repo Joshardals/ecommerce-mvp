@@ -23,7 +23,7 @@ export default function AdminProductPage() {
   );
 }
 
-function ProductsTable() {
+async function ProductsTable() {
   return (
     <Table>
       <TableHeader>
