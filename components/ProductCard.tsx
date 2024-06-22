@@ -64,6 +64,9 @@ export function ProductCardSkeleton() {
         <div className="w-full h-4 rounded-full bg-gray-300" />
         <div className="w-3/4 h-4 rounded-full bg-gray-300" />
       </CardContent>
+      <CardFooter>
+        <Button className="w-full" disabled size="lg"></Button>
+      </CardFooter>
     </Card>
   );
 }
