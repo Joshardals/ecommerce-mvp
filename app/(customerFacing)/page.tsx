@@ -9,7 +9,7 @@ import { ArrowRight } from "lucide-react";
 import { ProductCard, ProductCardSkeleton } from "@/components/ProductCard";
 import { Suspense } from "react";
 
-export default async function HomePage() {
+export default function HomePage() {
   return (
     <main className="space-y-12">
       <ProductGridSection
@@ -26,7 +26,7 @@ interface ProductGridSectionProps {
   productsFetcher: () => Promise<Product[]> | any;
 }
 
-async function ProductGridSection({
+function ProductGridSection({
   productsFetcher,
   title,
 }: ProductGridSectionProps) {
