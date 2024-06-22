@@ -1,6 +1,6 @@
 "use server";
 
-import { ZodSchema, z } from "zod";
+import { z } from "zod";
 import fs from "fs/promises";
 import { PrismaClient } from "@prisma/client";
 import { unstable_noStore as nostore } from "next/cache";
@@ -177,4 +177,17 @@ export async function updateProducts(
     console.log(`Error adding products... ${error.message}`);
   }
   redirect("/admin/products");
+}
+
+export async function getProductFilePath(id: string) {
+  try {
+    nostore();
+    const product = await prisma.product.findUnique({
+      where: { id },
+      select: { filePath: true, name: true },
+    });
+    return product;
+  } catch (error: any) {
+    console.log(`Error fetching product... ${error.message}`);
+  }
 }
