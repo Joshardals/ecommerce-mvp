@@ -4,7 +4,7 @@ import { ZodSchema, z } from "zod";
 import fs from "fs/promises";
 import { PrismaClient } from "@prisma/client";
 import { unstable_noStore as nostore } from "next/cache";
-import { redirect } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { File } from "node-fetch";
 
 const prisma = new PrismaClient();
@@ -77,5 +77,32 @@ export async function getProducts() {
     return products;
   } catch (error: any) {
     console.log(`Error fetching Products... ${error.message}`);
+  }
+}
+
+export async function toggleProductAvailability(
+  id: string,
+  isAvailableForPurchase: boolean
+) {
+  try {
+    nostore();
+    await prisma.product.update({
+      where: { id },
+      data: {
+        isAvailableForPurchase,
+      },
+    });
+  } catch (error: any) {
+    console.log(`Error fetching data ... ${error.message}`);
+  }
+}
+
+export async function deleteProduct(id: string) {
+  try {
+    nostore();
+    const product = await prisma.product.delete({ where: { id } });
+    if (product == null) return notFound();
+  } catch (error: any) {
+    console.log(`Error deleting product ... ${error.message}`);
   }
 }
