@@ -110,3 +110,14 @@ export async function deleteProduct(id: string) {
     console.log(`Error deleting product ... ${error.message}`);
   }
 }
+
+export async function getUniqueProduct(id: string) {
+  try {
+    nostore();
+    const product = await prisma.product.findUnique({ where: { id } });
+
+    return product;
+  } catch (error: any) {
+    console.log(`Error fetching product... ${error.message}`);
+  }
+}
