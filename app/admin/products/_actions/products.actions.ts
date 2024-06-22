@@ -166,7 +166,6 @@ export async function updateProducts(
     await prisma.product.update({
       where: { id },
       data: {
-        isAvailableForPurchase: false,
         name: data.name,
         description: data.description,
         priceInCents: data.priceInCents,
