@@ -101,7 +101,11 @@ export async function deleteProduct(id: string) {
   try {
     nostore();
     const product = await prisma.product.delete({ where: { id } });
+
     if (product == null) return notFound();
+
+    await fs.unlink(product.filePath);
+    await fs.unlink(`public${product.imagePath}`);
   } catch (error: any) {
     console.log(`Error deleting product ... ${error.message}`);
   }
