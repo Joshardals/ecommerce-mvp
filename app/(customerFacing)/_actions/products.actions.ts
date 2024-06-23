@@ -14,7 +14,7 @@ export async function getMostPopularProducts() {
       take: 6,
     });
   } catch (error: any) {
-    console.log(`Error fetching newest products`);
+    console.log(`Error fetching newest products... ${error.message}`);
   }
 }
 
@@ -27,6 +27,6 @@ export async function getNewestProducts() {
       take: 6,
     });
   } catch (error: any) {
-    console.log(`Error fetching newest products`);
+    console.log(`Error fetching newest products... ${error.message}`);
   }
 }
