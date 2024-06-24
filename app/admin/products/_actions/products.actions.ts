@@ -3,7 +3,7 @@
 import { z } from "zod";
 import fs from "fs/promises";
 import { PrismaClient } from "@prisma/client";
-import { unstable_noStore as nostore } from "next/cache";
+import { revalidatePath } from "next/cache";
 import { notFound, redirect } from "next/navigation";
 import { File } from "node-fetch";
 
@@ -24,7 +24,6 @@ const addSchema = z.object({
 
 export async function addProducts(prevState: unknown, formData: FormData) {
   try {
-    nostore();
     const result = addSchema.safeParse(Object.fromEntries(formData.entries()));
     if (result.success === false) {
       return result.error.formErrors.fieldErrors;
@@ -56,12 +55,14 @@ export async function addProducts(prevState: unknown, formData: FormData) {
   } catch (error: any) {
     console.log(`Error adding products... ${error.message}`);
   }
+  revalidatePath("/");
+  revalidatePath("/products");
+
   redirect("/admin/products");
 }
 
 export async function getProducts() {
   try {
-    nostore();
     const products = await prisma.product.findMany({
       select: {
         id: true,
@@ -85,13 +86,15 @@ export async function toggleProductAvailability(
   isAvailableForPurchase: boolean
 ) {
   try {
-    nostore();
     await prisma.product.update({
       where: { id },
       data: {
         isAvailableForPurchase,
       },
     });
+
+    revalidatePath("/");
+    revalidatePath("/products");
   } catch (error: any) {
     console.log(`Error fetching data ... ${error.message}`);
   }
@@ -99,13 +102,15 @@ export async function toggleProductAvailability(
 
 export async function deleteProduct(id: string) {
   try {
-    nostore();
     const product = await prisma.product.delete({ where: { id } });
 
     if (product == null) return notFound();
 
     await fs.unlink(product.filePath);
     await fs.unlink(`public${product.imagePath}`);
+
+    revalidatePath("/");
+    revalidatePath("/products");
   } catch (error: any) {
     console.log(`Error deleting product ... ${error.message}`);
   }
@@ -113,7 +118,6 @@ export async function deleteProduct(id: string) {
 
 export async function getUniqueProduct(id: string) {
   try {
-    nostore();
     const product = await prisma.product.findUnique({ where: { id } });
 
     return product;
@@ -133,7 +137,6 @@ export async function updateProducts(
   formData: FormData
 ) {
   try {
-    nostore();
     const result = editSchema.safeParse(Object.fromEntries(formData.entries()));
     if (result.success === false) {
       return result.error.formErrors.fieldErrors;
@@ -176,12 +179,14 @@ export async function updateProducts(
   } catch (error: any) {
     console.log(`Error adding products... ${error.message}`);
   }
+  revalidatePath("/");
+  revalidatePath("/products");
+
   redirect("/admin/products");
 }
 
 export async function getProductFilePath(id: string) {
   try {
-    nostore();
     const product = await prisma.product.findUnique({
       where: { id },
       select: { filePath: true, name: true },
