@@ -1,6 +1,9 @@
 import { formatCurrency } from "@/lib/formatter";
 import Image from "next/image";
-import { confirmPurchase } from "../../products/_actions/purchase.actions";
+import {
+  confirmPurchase,
+  createDownloadVerification,
+} from "../../products/_actions/purchase.actions";
 import { notFound } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
@@ -35,7 +38,13 @@ export default async function SuccessPage({
         </div>
         <Button className="mt-4" size={"lg"} asChild>
           {isSuccess ? (
-            <a></a>
+            <a
+              href={`/products/download/${await createDownloadVerification(
+                product.id
+              )}`}
+            >
+              Download
+            </a>
           ) : (
             <Link href={`/products/${product.id}/purchase`}>Try Again</Link>
           )}

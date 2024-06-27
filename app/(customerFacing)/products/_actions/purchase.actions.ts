@@ -54,3 +54,18 @@ export async function confirmPurchase(paymentIntent: string) {
     console.log(`Error: ${error.message}`);
   }
 }
+
+export async function createDownloadVerification(id: string) {
+  try {
+    const newVerification = await prisma.downloadVerification.create({
+      data: {
+        product: { connect: { id } },
+        expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 24),
+      },
+    });
+
+    return newVerification.id;
+  } catch (error: any) {
+    console.log(`Error creating download verification: ${error.message}`);
+  }
+}
