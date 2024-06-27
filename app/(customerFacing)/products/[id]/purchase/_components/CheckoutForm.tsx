@@ -19,6 +19,7 @@ import {
 import { loadStripe } from "@stripe/stripe-js";
 import Image from "next/image";
 import { FormEvent, useState } from "react";
+import { userOrderExists } from "../_actions/orders.actions";
 
 interface CheckoutFormProps {
   product: {
@@ -75,17 +76,25 @@ export function Form({
   const [errorMessage, setErrorMessage] = useState<string>();
   const [email, setemail] = useState<string>();
 
-  function handleSubmit(e: FormEvent) {
+  async function handleSubmit(e: FormEvent) {
     e.preventDefault();
 
-    if (stripe == null || elements == null || email == null) return;
+    if (stripe == null || elements == null) return;
 
     setIsLoading(true);
 
     // Check for existing order
-    userOrderExists(email, productId);
+    const orderExists = await userOrderExists(email!, productId);
 
-    stripe
+    if (orderExists) {
+      setErrorMessage(
+        "You have already purchased this product. Try downloading it from the My Orders page."
+      );
+      setIsLoading(false);
+      return;
+    }
+
+    await stripe
       .confirmPayment({
         elements,
         confirmParams: {

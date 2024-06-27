@@ -33,3 +33,24 @@ export async function getPurchase(id: string) {
     console.log(`Error fetching purchase: ${error.message}`);
   }
 }
+
+export async function confirmPurchase(paymentIntent: string) {
+  try {
+    const payment = await stripe.paymentIntents.retrieve(paymentIntent);
+
+    if (payment == null) return notFound();
+
+    const product = await prisma.product.findUnique({
+      where: { id: payment.metadata.productId },
+    });
+
+    if (product == null) return notFound();
+
+    return {
+      product,
+      isSuccess: payment.status === "succeeded",
+    };
+  } catch (error: any) {
+    console.log(`Error: ${error.message}`);
+  }
+}
